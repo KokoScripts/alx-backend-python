@@ -61,6 +61,23 @@ def stream_user_ages():
         if conn:
             conn.close()
 
+def calculate_average_age():
+    """
+    Calculates the average age of users by consuming the stream_user_ages generator
+    without loading the entire dataset into memory.
+
+    Returns:
+        float: The average age, or 0.0 if no ages are found.
+    """
+    total_age = 0.0
+    count = 0
+
+    # Consume the generator to get ages one by one
+    for age in stream_user_ages():
+        total_age += float(age) # Ensure age is treated as a float for calculation
+        count += 1
+
+    return total_age / count if count > 0 else 0.0
 
 # --- Example Usage ---
 if __name__ == "__main__":
@@ -78,4 +95,14 @@ if __name__ == "__main__":
         print(f"An error occurred during age streaming: {e}")
     finally:
         print(f"\nFinished streaming ages. Total ages processed: {age_count}")
+
+    print("\n--- Calculating Average Age ---")
+    try:
+        avg_age = calculate_average_age()
+        if avg_age > 0:
+            print(f"The average age of users is: {avg_age:.2f}")
+        else:
+            print("No users found to calculate average age.")
+    except Exception as e:
+        print(f"An error occurred while calculating average age: {e}")
 
