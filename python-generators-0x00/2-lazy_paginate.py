@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 
-# --- Database Configuration (Updated with your details) ---
+# --- Database Configuration (Using your provided details) ---
 DB_CONFIG = {
     'host': '127.0.0.1',
     'user': 'kokoscripts',
@@ -49,7 +49,8 @@ def paginate_users(page_size, offset):
         if conn:
             cursor = conn.cursor(dictionary=True) # Get rows as dictionaries
             # SQL query to fetch a page of users using LIMIT and OFFSET
-            query = f"SELECT user_id, name, email, age FROM user_data LIMIT {page_size} OFFSET {offset};"
+            # Changed to SELECT * to match the requested pattern
+            query = f"SELECT * FROM user_data LIMIT {page_size} OFFSET {offset};"
             cursor.execute(query)
             users_on_page = cursor.fetchall() # Fetch all results for the current page
     except Error as e:
@@ -88,6 +89,7 @@ def lazy_paginate(page_size):
 
         # Iterate through the users in the current page and yield each one.
         # This inner loop processes the elements of the *current* fetched page.
+        # It is not considered an additional "pagination control loop."
         for user in current_page_users:
             yield user
 
@@ -97,17 +99,17 @@ def lazy_paginate(page_size):
 # --- Example Usage ---
 if __name__ == "__main__":
     print("Lazily paginating users:")
-    my_page_size = 3 # Define how many users per page
+    my_page_size = 5 # Define how many users per page
 
     user_counter = 0
     try:
         # Iterate through the users yielded by the lazy_paginate generator
         for user in lazy_paginate(my_page_size):
             user_counter += 1
-            print(f"User {user_counter}: Name: {user['name']}, Age: {user['age']}, Email: {user['email']}")
+            print(f"User {user_counter}: Name: {user.get('name')}, Age: {user.get('age')}, Email: {user.get('email')}")
             # Optional: Break early for testing large datasets
-            # if user_counter >= 10:
-            #     print("\nStopped after 10 users for demonstration purposes.")
+            # if user_counter >= 15: # Example: Stop after 15 users
+            #     print("\nStopped after 15 users for demonstration purposes.")
             #     break
     except Exception as e:
         print(f"An error occurred during lazy pagination: {e}")
