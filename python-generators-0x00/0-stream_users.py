@@ -5,9 +5,9 @@ from mysql.connector import Error
 # IMPORTANT: Replace with your MySQL server details
 # These should match the credentials used when populating the database
 DB_CONFIG = {
-    'host': '127.0.0.1',  # e.g., 'localhost' or '127.0.0.1'
-    'user': 'kokoscripts',  # e.g., 'root'
-    'password': '************', # e.g., 'password'
+    'host': '127.0.0.1',  
+    'user': 'kokoscripts',  
+    'password': '************', 
     'database': 'ALX_prodev'
 }
 
