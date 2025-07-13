@@ -1,27 +1,35 @@
-import asyncio
-import aiosqlite
+import sqlite3
 
-DB_PATH = "my_database.db"
+class ExecuteQuery:
+    """
+    Custom context manager for executing SQL queries.
+    Manages connection setup and teardown, and returns results.
+    """
 
-async def async_fetch_users():
-    async with aiosqlite.connect(DB_PATH) as db:
-        async with db.execute("SELECT * FROM users") as cursor:
-            users = await cursor.fetchall()
-    return users
+    def __init__(self, db_path, query, params=None):
+        self.db_path = db_path
+        self.query = query
+        self.params = params if params is not None else ()
+        self.conn = None
+        self.cursor = None
+        self.result = None
 
-async def async_fetch_older_users():
-    async with aiosqlite.connect(DB_PATH) as db:
-        async with db.execute("SELECT * FROM users WHERE age > ?", (40,)) as cursor:
-            users = await cursor.fetchall()
-    return users
+    def __enter__(self):
+        self.conn = sqlite3.connect(self.db_path)
+        self.cursor = self.conn.cursor()
+        self.cursor.execute(self.query, self.params)
+        self.result = self.cursor.fetchall()
+        return self.result
 
-async def fetch_concurrently():
-    users_all, users_older = await asyncio.gather(
-        async_fetch_users(),
-        async_fetch_older_users()
-    )
-    print("All users:", users_all)
-    print("Users older than 40:", users_older)
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.cursor:
+            self.cursor.close()
+        if self.conn:
+            self.conn.close()
 
 if __name__ == "__main__":
-    asyncio.run(fetch_concurrently())
+    db_path = "my_database.db"
+    query = "SELECT * FROM users WHERE age > ?"
+    params = (25,)
+    with ExecuteQuery(db_path, query, params) as result:
+        print(result)
