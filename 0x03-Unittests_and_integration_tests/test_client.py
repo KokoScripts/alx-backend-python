@@ -108,6 +108,7 @@ class TestGithubOrgClient(unittest.TestCase):
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected_result)
 
+
 # Prepare the data for parameterized_class from TEST_PAYLOAD
 integration_payloads = []
 for org_data, repos_data in TEST_PAYLOAD:
