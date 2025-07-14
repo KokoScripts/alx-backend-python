@@ -178,7 +178,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient(self.org_name)
         self.assertEqual(client.public_repos(), self.expected_repos)
         # Verify calls to requests.get
-        # The first call is for org payload, second for repos payload
         calls = [
             unittest.mock.call(GithubOrgClient.ORG_URL.format(
                 org=self.org_name)),
@@ -195,7 +194,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient(self.org_name)
         self.assertEqual(client.public_repos("apache-2.0"), self.apache2_repos)
         # Verify calls to requests.get
-        # The first call is for org payload, second for repos payload
         calls = [
             unittest.mock.call(GithubOrgClient.ORG_URL.format(
                 org=self.org_name)),
