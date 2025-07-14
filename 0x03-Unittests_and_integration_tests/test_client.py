@@ -39,11 +39,14 @@ class TestGithubOrgClient(unittest.TestCase):
         based on a mocked org property.
         """
         # Define the payload that the mocked org property will return
-        expected_payload = {"repos_url": "https://api.github.com/users/test_org/repos"}
+        expected_payload = {
+            "repos_url": "https://api.github.com/users/test_org/repos"
+            }
 
         # Use patch as a context manager to mock the 'org' property
         # PropertyMock is used because 'org' is a memoized property
-        with patch('client.GithubOrgClient.org', new_callable=PropertyMock) as mock_org:
+        with patch('client.GithubOrgClient.org',
+                   new_callable=PropertyMock) as mock_org:
             mock_org.return_value = expected_payload
             client = GithubOrgClient("test_org")
             # Access the _public_repos_url property
@@ -55,8 +58,8 @@ class TestGithubOrgClient(unittest.TestCase):
     @patch('client.get_json')
     def test_public_repos(self, mock_get_json: unittest.mock.MagicMock) -> None:
         """
-        Tests that GithubOrgClient.public_repos returns the expected list of repositories.
-        Mocks get_json and _public_repos_url to control test data.
+        Tests that GithubOrgClient.public_repos returns the expected list of
+        repositories. Mocks get_json and _public_repos_url to control test data.
         """
         # Define the payload that get_json (mocking repos_payload) will return
         test_payload = [
@@ -85,10 +88,7 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_public_repos_url.assert_called_once()
 
             # Assert that get_json was called once with the expected URL
-            # Note: get_json is called by repos_payload, which uses _public_repos_url
+            # Note: get_json is called by repos_payload,
+            # which uses _public_repos_url
             mock_get_json.assert_called_once_with(expected_repos_url)
-
-
-if __name__ == '__main__':
-    unittest.main()
 
