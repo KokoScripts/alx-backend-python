@@ -59,7 +59,8 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_public_repos(self, mock_get_json: unittest.mock.MagicMock) -> None:
         """
         Tests that GithubOrgClient.public_repos returns the expected list of
-        repositories. Mocks get_json and _public_repos_url to control test data.
+        repositories. Mocks get_json and _public_repos_url to control test
+        data.
         """
         # Define the payload that get_json (mocking repos_payload) will return
         test_payload = [
@@ -91,4 +92,3 @@ class TestGithubOrgClient(unittest.TestCase):
             # Note: get_json is called by repos_payload,
             # which uses _public_repos_url
             mock_get_json.assert_called_once_with(expected_repos_url)
-
