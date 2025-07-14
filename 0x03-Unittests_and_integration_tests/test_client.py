@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Unit tests for client.GithubOrgClient."""
-
+"""Unit tests for client.GithubOrgClient, including integration tests.
+"""
 import unittest
 from unittest.mock import patch, PropertyMock
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
+import fixtures
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Unit tests for GithubOrgClient."""
+    """Test case for GithubOrgClient."""
 
     @parameterized.expand([
         ("google",),
@@ -16,7 +17,9 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     @patch("client.get_json")
     def test_org(self, org_name, mock_get_json):
-        """Test GithubOrgClient.org returns correct value and calls get_json."""
+        """
+        Test GithubOrgClient.org returns the correct value and calls get_json.
+        """
         expected_payload = {"login": org_name, "id": 123}
         mock_get_json.return_value = expected_payload
 
@@ -27,7 +30,9 @@ class TestGithubOrgClient(unittest.TestCase):
         )
 
     def test_public_repos_url(self):
-        """Test _public_repos_url returns correct repos_url from org property."""
+        """
+        Test _public_repos_url returns the correct repos_url from org property.
+        """
         payload = {"repos_url": "https://api.github.com/orgs/test/repos"}
         with patch.object(
             GithubOrgClient, "org", new_callable=PropertyMock
@@ -41,7 +46,9 @@ class TestGithubOrgClient(unittest.TestCase):
 
     @patch("client.get_json")
     def test_public_repos(self, mock_get_json):
-        """Test public_repos returns repo names and calls correct methods."""
+        """
+        Test public_repos returns repo names and calls the correct methods.
+        """
         test_repos_payload = [
             {"name": "repo1"},
             {"name": "repo2"},
@@ -67,7 +74,45 @@ class TestGithubOrgClient(unittest.TestCase):
         ({"license": {"key": "other_license"}}, "my_license", False),
     ])
     def test_has_license(self, repo, license_key, expected):
-        """Test has_license returns True if repo has the specified license key."""
+        """
+        Test has_license returns True if repo has the specified license key.
+        """
         self.assertEqual(
             GithubOrgClient.has_license(repo, license_key), expected
         )
+
+
+@parameterized_class([
+    {
+        "org_payload": fixtures.org_payload,
+        "repos_payload": fixtures.repos_payload,
+        "expected_repos": fixtures.expected_repos,
+        "apache2_repos": fixtures.apache2_repos,
+    }
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration tests for GithubOrgClient.public_repos using fixtures."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up integration tests by patching requests.get."""
+        cls.get_patcher = patch("requests.get")
+        mock_get = cls.get_patcher.start()
+
+        def side_effect(url):
+            if url == "https://api.github.com/orgs/google":
+                mock_resp = unittest.mock.Mock()
+                mock_resp.json.return_value = cls.org_payload
+                return mock_resp
+            if url == cls.org_payload["repos_url"]:
+                mock_resp = unittest.mock.Mock()
+                mock_resp.json.return_value = cls.repos_payload
+                return mock_resp
+            return unittest.mock.Mock()
+
+        mock_get.side_effect = side_effect
+
+    @classmethod
+    def tearDownClass(cls):
+        """Stop patching requests.get after integration tests."""
+        cls.get_patcher.stop()
