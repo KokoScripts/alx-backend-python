@@ -103,11 +103,10 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_has_license(self, repo: Dict, license_key: str,
                          expected_result: bool) -> None:
         """
-        Tests that GithubOrgClient.has_license returns the correct boolean 
+        Tests that GithubOrgClient.has_license returns the correct boolean
         """
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected_result)
-
 
 # Prepare the data for parameterized_class from TEST_PAYLOAD
 integration_payloads = []
