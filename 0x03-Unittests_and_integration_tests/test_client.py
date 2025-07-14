@@ -56,8 +56,7 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_org.assert_called_once()
 
     @patch('client.get_json')
-    def test_public_repos(self, mock_get_json: unittest.mock.MagicMock) 
-    -> None:
+    def test_public_repos(self, mock_get_json: unittest.mock.MagicMock) -> None:
         """
         Tests that GithubOrgClient.public_repos returns the expected list of
         repositories. Mocks get_json and _public_repos_url to control test
