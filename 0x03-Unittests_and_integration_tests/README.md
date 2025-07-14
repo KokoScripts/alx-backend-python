@@ -6,6 +6,9 @@ This project covers how to write **unit tests** and **integration tests** for Py
 
 ```
 0x03-Unittests_and_integration_tests/
+├── utils.py
+├── client.py
+├── fixtures.py
 ├── test_utils.py
 ├── test_client.py
 └── README.md
@@ -15,6 +18,7 @@ This project covers how to write **unit tests** and **integration tests** for Py
 
 - **client.py**: Contains the `GithubOrgClient` class, which interacts with the GitHub API.
 - **fixtures.py**: Provides sample data for integration testing.
+- **test_utils.py**: Contains unit tests for utility functions used throughout the project, such as memoization and JSON fetching.
 - **test_client.py**: Contains unit and integration tests for `GithubOrgClient`.
 - **README.md**: Project documentation.
 
@@ -37,6 +41,7 @@ pip install pytest parameterized
 Then, run the tests:
 
 ```bash
+pytest test_utils.py
 pytest test_client.py
 ```
 
@@ -68,4 +73,3 @@ KokoScripts
 ## License
 
 This project is intended for educational purposes as part of the ALX curriculum.
-
