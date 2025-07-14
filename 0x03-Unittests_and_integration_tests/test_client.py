@@ -8,7 +8,7 @@ from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 from typing import Dict, List
 from fixtures import TEST_PAYLOAD
-import requests
+import requests # This import is not strictly needed for the patch itself
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -143,7 +143,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         Set up class-level fixtures for integration tests.
         Mocks requests.get to return predefined payloads from fixtures.
         """
-        cls.get_patcher = patch('requests.get')
+        # Correctly patch requests.get as it's used in utils.py
+        cls.get_patcher = patch('utils.requests.get')
         cls.mock_get = cls.get_patcher.start()
 
         def side_effect_func(url: str) -> Mock:
