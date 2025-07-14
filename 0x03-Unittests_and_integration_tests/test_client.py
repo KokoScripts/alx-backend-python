@@ -104,7 +104,7 @@ class TestGithubOrgClient(unittest.TestCase):
                          expected_result: bool) -> None:
         """
         Tests that GithubOrgClient.has_license returns the correct boolean 
-        value. """
+        """
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected_result)
 
